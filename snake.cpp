@@ -1,13 +1,13 @@
-#include < iostream >
-#include < conio.h >
-
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
 using namespace std;
 
 bool gameover;
 
 const int width = 20;
 const int height = 17;
-
+int delay = 200;//[millisecond]
 int x, y, fruitX, fruitY, score;
 
 //snake coordinates
@@ -16,11 +16,11 @@ int nTail;
 
 // Controls
 enum eDirecton {
-	STOP = 0,
-	LEFT,
-	RIGHT,
-	UP,
-	DOWN
+	STOP	=  0,
+	LEFT	= 75,
+	RIGHT	= 77,
+	UP	= 72,
+	DOWN	= 80
 }; 
 
 eDirecton dir;
@@ -53,9 +53,9 @@ void Draw() {
 				cout << "#"; //walls
 
 			if (i == y && j == x)
-				cout << "*"; // snake tale
+				cout << "@"; // snake tale
 			else if (i == fruitY && j == fruitX)
-				cout << "%"; // change it to change the fruit
+				cout << "$"; // change it to change the fruit
 			else {
 				bool print = false;
 				for (int k = 0; k < nTail; k++) {
@@ -82,23 +82,27 @@ void Draw() {
 
 void Input()
 {
+	int key;
 	if (_kbhit()) {
-		switch (_getch()) {
-		case 'a':
-			dir = LEFT;
-			break;
-		case 'd':
-			dir = RIGHT;
-			break;
-		case 'w':
-			dir = UP;
-			break;
-		case 's':
-			dir = DOWN;
-			break;
-		case 'x':
+		key = getch();
+		if(key == 'x')
 			gameover = true;
-			break;
+		else{
+			key = getch();
+			switch (key) {
+			case LEFT:
+				dir = LEFT;
+				break;
+			case RIGHT:
+				dir = RIGHT;
+				break;
+			case UP:
+				dir = UP;
+				break;
+			case DOWN:
+				dir = DOWN;
+				break;
+			}
 		}
 	}
 }
@@ -165,7 +169,7 @@ int main()
 		Draw();
 		Input();
 		algorithm();
-
+		Sleep(delay);
 	}
 	return 0;
 }
