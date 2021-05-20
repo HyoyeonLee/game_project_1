@@ -1,10 +1,18 @@
-int x,y,preyX,preyY;
-int step=10;
+int x,y,bearX,bearY;
+int step=20;
 int score=0;
 PImage field,bear,bunny;
-int button,pre;
+int button;
 PFont font;
 String str="Score: ";
+color now,c = color(0,255,0);
+void gameOver()
+{
+        textAlign(CENTER,CENTER);
+        fill(0);
+        text("GAME OVER",width/2,height/2);
+        noLoop();
+}
 void setup()
 {
   size(600,600);
@@ -17,8 +25,8 @@ void setup()
   bunny = loadImage("./bunny.png");
   x=width/2;
   y=height/2;
-  preyX = (int)random(100,500);
-  preyY = (int)random(100,500);
+  bearX = (int)random(100,500);
+  bearY = (int)random(100,500);
   println(button);
   font = createFont("Consolas Bold",200);
   textFont(font);
@@ -33,42 +41,21 @@ void position()
   {
     case 0:
       y-=step;
-      if(y<100)
-      {
-        textAlign(CENTER,CENTER);
-        fill(0);
-        text("GAME OVER",width/2,height/2);
-        noLoop();
-      }
-     break;
+      break;
     case 1:
       y+=step;
-      if(y>500)
-      {
-        textAlign(CENTER,CENTER);fill(0);
-        text("GAME OVER",width/2,height/2);
-        noLoop();
-      }
       break;
     case 2:
       x+=step;
-      if(x>500)
-      {
-        textAlign(CENTER,CENTER);fill(0);
-        text("GAME OVER",width/2,height/2);
-        noLoop();
-      }
       break;
     case 3:
       x-=step;
-      if(x<100)
-      {
-        textAlign(CENTER,CENTER);
-        fill(0);
-        text("GAME OVER",width/2,height/2);
-        noLoop();
-      }
       break;
+  }
+  now = get(x,y);
+  if(green(now)==255 && red(now)<30 && blue(now)<30)
+  {
+    gameOver();
   }
 }
 void draw()
@@ -78,14 +65,15 @@ void draw()
   image(field,0,0,600,600);
   text(str+score,40,40);
   imageMode(CENTER);
-  if(abs(x-preyX)<20 && abs(y-preyY)<20)
+  if(abs(x-bearX)<20 && abs(y-bearY)<20)
   {
     score+=10;
-    preyX=(int)random(100,500);
-    preyY=(int)random(100,500);
+    bearX=(int)random(100,500);
+    bearY=(int)random(100,500);
+    step = 5*(score/50)+20;
   }
-  //prey
-  image(bear,preyX,preyY,100,100);
+  //bear
+  image(bear,bearX,bearY,100,100);
   //chaser
   position();
   image(bunny,x,y,120,120);
@@ -97,16 +85,22 @@ void keyPressed()
   if(key==CODED)
   {
     switch(keyCode){
-      case UP: pre=button;button=0;break;
-      case DOWN: pre=button;button=1;break;
-      case RIGHT: pre=button;button=2;break;
-      case LEFT: pre=button;button=3;break;
+      case UP: 
+        button=0;
+        break;
+      case DOWN: 
+        button=1;
+        break;
+      case RIGHT: 
+        button=2;
+        break;
+      case LEFT: 
+        button=3;
+        break;
     }
   }
   if(key=='q')
   {
-    fill(0);
-    text("GAME OVER",width/2,height/2);
-    noLoop();
+    gameOver();
   }
 }
