@@ -1,11 +1,25 @@
 int x,y,bearX,bearY;
-int step=20;
+int step=15;
 int score=0;
 PImage field,bear,bunny;
 int button;
 PFont font;
 String str="Score: ";
 color now,c = color(0,255,0);
+int isWall(int x,int y)
+{
+  int tempx,tempy;
+  int dx[]= {-10,  0,0,10};
+  int dy[]= {  0,-10,10,0};
+  for(int i=0;i<4;i++)
+  {
+    tempx = x+dx[i];
+    tempy = y+dy[i];
+    now = get(tempx,tempy);
+    if(green(now)==255 && red(now)<30 && blue(now)<30) return 1;
+  }
+  return 0;
+}
 void gameOver()
 {
         textAlign(CENTER,CENTER);
@@ -13,21 +27,31 @@ void gameOver()
         text("GAME OVER",width/2,height/2);
         noLoop();
 }
+void getBearPosition()
+{
+  while(true)
+  {
+    bearX = (int)random(100,500);
+    bearY = (int)random(100,500);
+    if(isWall(bearX,bearY)==1)continue;
+    else if(isWall(bearX,bearY)==0)break;
+  }
+}
+  
 void setup()
 {
   size(600,600);
   background(255);
-  field = loadImage("game_project1_BG000.jpg");
+  field = loadImage("game_project1_BG002.jpg");
   imageMode(CORNER);
   image(field,0,0,600,600);
   imageMode(CENTER);
   bear = loadImage("./bear.png");
   bunny = loadImage("./bunny.png");
-  x=width/2;
-  y=height/2;
-  bearX = (int)random(100,500);
-  bearY = (int)random(100,500);
-  println(button);
+  x=100;
+  y=300;
+  getBearPosition();
+  //println(button);
   font = createFont("Consolas Bold",200);
   textFont(font);
   textSize(40);
@@ -52,11 +76,7 @@ void position()
       x-=step;
       break;
   }
-  now = get(x,y);
-  if(green(now)==255 && red(now)<30 && blue(now)<30)
-  {
-    gameOver();
-  }
+  if(isWall(x,y)==1)gameOver();
 }
 void draw()
 {
@@ -70,13 +90,13 @@ void draw()
     score+=10;
     bearX=(int)random(100,500);
     bearY=(int)random(100,500);
-    step = 5*(score/50)+20;
+    step += 5;
   }
   //bear
-  image(bear,bearX,bearY,100,100);
+  image(bear,bearX,bearY,80,80);
   //chaser
   position();
-  image(bunny,x,y,120,120);
+  image(bunny,x,y,100,100);
   delay(200);
 }
 
