@@ -18,10 +18,11 @@ char blk_names[] = {'L','O','I','T','Z','S'};
 int blk_idx,rot_idx;
 int x,y,isNew,x0,y0;
 PImage img_blk,img_bg;
-int dl=100;          // 500x500 (unit=100) --resize to--> 100X100 (unit=20)
+int dl=120;          // 500x500 (unit=100) --resize to--> 100X100 (unit=20)
 int edge_finding_unit=10;
 int step = 20;       //unit size
 String bg_fname = "bg.png"; //  
+/*
 int edges[][][] = {//index[blk][rot][dB/dL/dR]
 {{3,-2,2},{2,-3,3},{3,-2,2},{2,-3,3}},//L
 {{2,-2,2},{2,-2,2},{2,-2,2},{2,-2,2}},//O
@@ -30,6 +31,19 @@ int edges[][][] = {//index[blk][rot][dB/dL/dR]
 {{3,-2,2},{2,-3,3},{3,-2,2},{2,-3,3}},//Z
 {{3,-2,2},{2,-3,3},{3,-2,2},{2,-3,3}} //S
 };
+*/
+int edges[][][] = {
+{{1,-8,1},{1, -9,1},{1,-9,1},{1,-10,1}},
+{{1,-8,1},{1, -8,1},{1,-8,1},{1, -8,1}},
+{{1,-8,1},{1,-10,1},{1,-8,1},{1,-10,1}},
+{{1,-9,1},{1, -9,1},{1,-9,1},{1, -9,1}},
+{{1,-9,1},{1, -9,1},{1,-9,1},{1, -9,1}},
+{{1,-9,1},{1, -9,1},{1,-9,1},{1, -9,1}}
+};
+
+
+
+
 int dB,dL,dR;
 String get_blk_fname(int blk_idx, int rot_idx)
 {
@@ -49,7 +63,7 @@ void refresh()
 
 void setup()
 {
-  size(320,560);
+  size(360,600);
   background(255);
   saveFrame(bg_fname);
   x0=width/2;y0=80; //top center

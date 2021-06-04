@@ -11,50 +11,50 @@ void drawBlock(int idx)
   {
     case 0:
       fill(255,150,  0);            //L orange
-      rect(150,200,dl,dl);
-      rect(150,300,dl,dl);
-      rect(250,300,dl,dl);
-      rect(350,300,dl,dl);
+      rect(250,250,dl,dl);
+      rect(250,350,dl,dl);
+      rect(350,350,dl,dl);
+      rect(450,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
     case 1:
       fill(128,  0,128);            //O purple
-      rect(200,200,dl,dl);
-      rect(200,300,dl,dl);
-      rect(300,200,dl,dl);
-      rect(300,300,dl,dl);
+      rect(250,250,dl,dl);
+      rect(250,350,dl,dl);
+      rect(350,250,dl,dl);
+      rect(350,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
     case 2:
       fill(  0,128,  0);            //Z olive
-      rect(150,200,dl,dl);
-      rect(250,200,dl,dl);
-      rect(250,300,dl,dl);
-      rect(350,300,dl,dl);
+      rect(250,250,dl,dl);
+      rect(350,150,dl,dl);
+      rect(350,250,dl,dl);
+      rect(250,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
     case 3:
       fill(200,  0,200);            //S pink
-      rect(150,300,dl,dl);
-      rect(250,300,dl,dl);
-      rect(250,200,dl,dl);
-      rect(350,200,dl,dl);
+      rect(250,150,dl,dl);
+      rect(350,250,dl,dl);
+      rect(250,250,dl,dl);
+      rect(350,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
     case 4:
       fill(  0,128,128);            //T teal
-      rect(150,300,dl,dl);
-      rect(250,200,dl,dl);
-      rect(250,300,dl,dl);
-      rect(350,300,dl,dl);
+      rect(250,150,dl,dl);
+      rect(250,250,dl,dl);
+      rect(250,350,dl,dl);
+      rect(350,250,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
     case 5:
       fill(255,  0,  0);            //I red
-      rect(100,250,dl,dl);
-      rect(200,250,dl,dl);
-      rect(300,250,dl,dl);
-      rect(400,250,dl,dl);
+      rect(150,250,dl,dl);
+      rect(250,250,dl,dl);
+      rect(350,250,dl,dl);
+      rect(450,250,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
   }
@@ -65,7 +65,7 @@ void setup()
 {
   //fullScreen();
   imageMode(CENTER);
-  size(500,500);
+  size(600,600);
   background(255,0);
       
   for (int idx=0; idx<6; idx++)    //==========================block names
