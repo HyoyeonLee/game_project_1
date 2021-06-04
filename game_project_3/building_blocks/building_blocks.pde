@@ -15,7 +15,7 @@ void drawBlock(int idx)
       rect(150,300,dl,dl);
       rect(250,300,dl,dl);
       rect(350,300,dl,dl);
-      saveFrame(blockName[idx]+"0.jpg");
+      saveFrame(blockName[idx]+"0.png");
       break;
     case 1:
       fill(128,  0,128);            //O purple
@@ -23,7 +23,7 @@ void drawBlock(int idx)
       rect(200,300,dl,dl);
       rect(300,200,dl,dl);
       rect(300,300,dl,dl);
-      saveFrame(blockName[idx]+"0.jpg");
+      saveFrame(blockName[idx]+"0.png");
       break;
     case 2:
       fill(  0,128,  0);            //Z olive
@@ -31,7 +31,7 @@ void drawBlock(int idx)
       rect(250,200,dl,dl);
       rect(250,300,dl,dl);
       rect(350,300,dl,dl);
-      saveFrame(blockName[idx]+"0.jpg");
+      saveFrame(blockName[idx]+"0.png");
       break;
     case 3:
       fill(200,  0,200);            //S pink
@@ -39,7 +39,7 @@ void drawBlock(int idx)
       rect(250,300,dl,dl);
       rect(250,200,dl,dl);
       rect(350,200,dl,dl);
-      saveFrame(blockName[idx]+"0.jpg");
+      saveFrame(blockName[idx]+"0.png");
       break;
     case 4:
       fill(  0,128,128);            //T teal
@@ -47,7 +47,7 @@ void drawBlock(int idx)
       rect(250,200,dl,dl);
       rect(250,300,dl,dl);
       rect(350,300,dl,dl);
-      saveFrame(blockName[idx]+"0.jpg");
+      saveFrame(blockName[idx]+"0.png");
       break;
     case 5:
       fill(255,  0,  0);            //I red
@@ -55,7 +55,7 @@ void drawBlock(int idx)
       rect(200,250,dl,dl);
       rect(300,250,dl,dl);
       rect(400,250,dl,dl);
-      saveFrame(blockName[idx]+"0.jpg");
+      saveFrame(blockName[idx]+"0.png");
       break;
   }
   
@@ -66,27 +66,31 @@ void setup()
   //fullScreen();
   imageMode(CENTER);
   size(500,500);
-  background(255);
+  background(255,0);
       
   for (int idx=0; idx<6; idx++)    //==========================block names
   {
-    background(255);
+    background(255,0);
     drawBlock(idx);
     delay(500);
     for (int i=1;i<4;i++)          //==========================rotated images
     {
-      background(255);
+      background(255,0);
       translate(250,250);
       rotate(radians(90));
       translate(-250,-250);
-      String preImg = blockName[idx]+str(i-1)+".jpg";
-      String curImg = blockName[idx]+str(i  )+".jpg";
+      String preImg = blockName[idx]+str(i-1)+".png";
+      String curImg = blockName[idx]+str(i)+".png";
       img = loadImage(preImg);
+      //delay(1000);
       imageMode(CENTER);
       image(img,250,250);
-      
       saveFrame(curImg);
-      delay(500);
+      translate(250,250);
+      rotate(radians(-90));
+      translate(-250,-250);
+      
+      delay(1000);
     }
   }
 }
