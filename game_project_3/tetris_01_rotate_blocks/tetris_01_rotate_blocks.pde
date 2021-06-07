@@ -14,34 +14,24 @@ TETRIS from the scratch by HYOYEON LEE 2021.05.31
 if all rows are occupied, remove that row.
 and pushes the upper parts to be connected to the lower.
 */
-char blk_names[] = {'L','O','I','T','Z','S'};
+char blk_names[] = {'I','J','L','O','S','T','Z'};
 int blk_idx,rot_idx;
 int x,y,isNew,x0,y0;
 PImage img_blk,img_bg;
 int dl=120;          // 500x500 (unit=100) --resize to--> 100X100 (unit=20)
-int edge_finding_unit=10;
+int unit=20;
 int step = 20;       //unit size
 String bg_fname = "bg.png"; //  
-/*
-int edges[][][] = {//index[blk][rot][dB/dL/dR]
-{{3,-2,2},{2,-3,3},{3,-2,2},{2,-3,3}},//L
-{{2,-2,2},{2,-2,2},{2,-2,2},{2,-2,2}},//O
-{{4,-1,1},{1,-4,4},{4,-1,1},{1,-4,4}},//I
-{{3,-2,2},{2,-3,3},{3,-2,2},{2,-3,3}},//T
-{{3,-2,2},{2,-3,3},{3,-2,2},{2,-3,3}},//Z
-{{3,-2,2},{2,-3,3},{3,-2,2},{2,-3,3}} //S
-};
-*/
+//iB,jL,jR
 int edges[][][] = {
-{{1,-8,1},{1, -9,1},{1,-9,1},{1,-10,1}},
-{{1,-8,1},{1, -8,1},{1,-8,1},{1, -8,1}},
-{{1,-8,1},{1,-10,1},{1,-8,1},{1,-10,1}},
-{{1,-9,1},{1, -9,1},{1,-9,1},{1, -9,1}},
-{{1,-9,1},{1, -9,1},{1,-9,1},{1, -9,1}},
-{{1,-9,1},{1, -9,1},{1,-9,1},{1, -9,1}}
+{{40,20,0},{20,40,40},{40,0,20},{0,40,40}},
+{{20,20,20},{20,20,40},{40,20,20},{20,40,20}},
+{{20,40,20},{20,20,20},{20,20,40},{40,20,20}},
+{{20,20,20},{20,20,20},{20,20,20},{20,20,20}},
+{{20,40,20},{40,20,20},{20,20,40},{20,20,20}},
+{{20,40,20},{20,20,20},{20,20,40},{40,20,20}},
+{{20,40,20},{40,20,20},{20,20,40},{20,20,20}}
 };
-
-
 
 
 int dB,dL,dR;
@@ -55,7 +45,7 @@ String get_blk_fname(int blk_idx, int rot_idx)
 void refresh()
 {
    
-   blk_idx=(int)random(0,5); //randomly chosen block type
+   blk_idx=(int)random(0,7); //randomly chosen block type
    rot_idx=(int)random(0,4); //randomly rotated state
    isNew=1;
 }
@@ -63,11 +53,12 @@ void refresh()
 
 void setup()
 {
+  println(width);
   size(360,600);
   background(255);
   saveFrame(bg_fname);
-  x0=width/2;y0=80; //top center
-  blk_idx=(int)random(0,5); //randomly chosen block type
+  x0=width/2;y0=60; //top center
+  blk_idx=(int)random(0,7); //randomly chosen block type
   rot_idx=(int)random(0,4); //randomly rotated state
   isNew=1;                  //1:(x,y)=(x0,y0), 0:(x,y)=on the fly
   imageMode(CENTER);
@@ -85,7 +76,7 @@ void draw()
   }    
   img_blk = loadImage(get_blk_fname(blk_idx,rot_idx));
   image(img_blk,x,y,dl,dl);
-  dB=y+edge_finding_unit*edges[blk_idx][rot_idx][0];
+  dB=y+edges[blk_idx][rot_idx][0];
   if(dB==height)
   {
     saveFrame(bg_fname);
@@ -93,7 +84,7 @@ void draw()
   }
   else
   {
-    y=y+step/2;
+    y=y+step;
     delay(100);
   }
 }
@@ -105,24 +96,36 @@ void keyPressed()
     {
       case UP: 
         rot_idx=(rot_idx+1)%4;    //clockwise (+90deg)
+        dR= x + edges[blk_idx][rot_idx][2];
+        dL= x - edges[blk_idx][rot_idx][1];
+        while(dR>width)
+        {
+          x = x-step;
+          dR= x + edges[blk_idx][rot_idx][2];
+        }
+        while(dL<0)
+        {
+          x = x+step;
+          dL= x - edges[blk_idx][rot_idx][1];
+        }
         break;
       case DOWN: 
         rot_idx=(rot_idx-1+4)%4;  //counter-clockwise (-90deg)
         break;
       case RIGHT: 
-        dR=x+edge_finding_unit*edges[blk_idx][rot_idx][2];
-        if(dR==width){}
+        dR= x + edges[blk_idx][rot_idx][2];
+        if(dR>=width){}
         else x=x+step;
         break;
       case LEFT:
-        dL=x+edge_finding_unit*edges[blk_idx][rot_idx][1];
-        if(dL==0){}
+        dL= x - edges[blk_idx][rot_idx][1];
+        if(dL<=0){}
         else x=x-step;
         break;
       case 0x20://space bar
-        dB=y+edge_finding_unit*edges[blk_idx][rot_idx][0];
+        dB= y + edges[blk_idx][rot_idx][0];
         if(dB==height){}
-        else y=y+step/2;
+        else y=y+step;
         break;
     }
   }

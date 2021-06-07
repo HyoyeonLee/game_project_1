@@ -1,7 +1,7 @@
 int dl  = 100;
 PImage img;
 int count=0;
-String blockName[]= {"blockL","blockO","blockZ","blockS","blockT","blockI"};
+String blockName[]= {"blockI","blockJ","blockL","blockO","blockS","blockT","blockZ"};
 //int panelSize=500;
 void drawBlock(int idx)
 {
@@ -9,7 +9,7 @@ void drawBlock(int idx)
   rectMode(CENTER);
   switch (idx)
   {
-    case 0:
+    case 2:
       fill(255,150,  0);            //L orange
       rect(250,250,dl,dl);
       rect(250,350,dl,dl);
@@ -17,7 +17,7 @@ void drawBlock(int idx)
       rect(450,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
-    case 1:
+    case 3:
       fill(128,  0,128);            //O purple
       rect(250,250,dl,dl);
       rect(250,350,dl,dl);
@@ -25,7 +25,7 @@ void drawBlock(int idx)
       rect(350,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
-    case 2:
+    case 6:
       fill(  0,128,  0);            //Z olive
       rect(250,250,dl,dl);
       rect(350,150,dl,dl);
@@ -33,7 +33,7 @@ void drawBlock(int idx)
       rect(250,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
-    case 3:
+    case 4:
       fill(200,  0,200);            //S pink
       rect(250,150,dl,dl);
       rect(350,250,dl,dl);
@@ -41,7 +41,7 @@ void drawBlock(int idx)
       rect(350,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
-    case 4:
+    case 5:
       fill(  0,128,128);            //T teal
       rect(250,150,dl,dl);
       rect(250,250,dl,dl);
@@ -49,12 +49,20 @@ void drawBlock(int idx)
       rect(350,250,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
-    case 5:
+    case 0:
       fill(255,  0,  0);            //I red
       rect(150,250,dl,dl);
       rect(250,250,dl,dl);
       rect(350,250,dl,dl);
       rect(450,250,dl,dl);
+      saveFrame(blockName[idx]+"0.png");
+      break;
+    case 1:
+      fill(255,255,  0);            //J orange
+      rect(250,250,dl,dl);
+      rect(350,250,dl,dl);
+      rect(450,250,dl,dl);
+      rect(250,350,dl,dl);
       saveFrame(blockName[idx]+"0.png");
       break;
   }
@@ -76,19 +84,19 @@ void setup()
     for (int i=1;i<4;i++)          //==========================rotated images
     {
       background(255,0);
-      translate(250,250);
+      translate(300,300);
       rotate(radians(90));
-      translate(-250,-250);
+      translate(-300,-300);
       String preImg = blockName[idx]+str(i-1)+".png";
       String curImg = blockName[idx]+str(i)+".png";
       img = loadImage(preImg);
       //delay(1000);
       imageMode(CENTER);
-      image(img,250,250);
+      image(img,300,300);
       saveFrame(curImg);
-      translate(250,250);
+      translate(300,300);
       rotate(radians(-90));
-      translate(-250,-250);
+      translate(-300,-300);
       
       delay(1000);
     }

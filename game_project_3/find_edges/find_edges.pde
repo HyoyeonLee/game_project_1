@@ -1,13 +1,13 @@
 PImage img;
 int cols=6,rows=6;
 int[][] state = new int[cols][rows];
-char blk_names[] = {'L','O','I','T','Z','S'};
-String fpath = "../building_blocks/";
+char blk_names[] = {'I','J','L','O','S','T','Z'};
+String fpath = "../building_blocks_transparent/";
 color w=color(255,255,255);
 color fig;
 int unit = 20; //panelL : 600-->120 ,  unit length : 100-->20
-int xL,xR,yB;
-int xL0=width-unit/2, xR0=unit/2,yB0=unit/2;
+int iB,jL,jR;
+int iB0=0, jL0=6, jR0=0;
 
 
 void setup()
@@ -15,24 +15,24 @@ void setup()
   size(120,120);
   background(255);
   imageMode(CENTER);
-  xL=xL0;
-  xR=xR0;
-  yB=yB0;
+  iB=iB0;
+  jL=jL0;
+  jR=jR0;
   for(int i=0;i<rows;i++){  
     for (int j=0;j<cols;j++){
         state[i][j]=0;
       }
   }
-  println("type_rot :\t bottom(yB),left(xL),right(xR)");
-  for(int type=0;type<6;type++)
+  println("type_rot :\t bottom(iB),left(jL),right(jR)");
+  for(int type=0;type<7;type++)
   {
     print("{");
     for(int rot=0;rot<4;rot++)
     {
       print("{");
-      xL=xL0;
-      xR=xR0;
-      yB=yB0;
+      iB=iB0;
+      jL=jL0;
+      jR=jR0;     
       background(255);
       String fname=fpath+"block"+blk_names[type]+str(rot)+".png";
       img = loadImage(fname);
@@ -41,19 +41,17 @@ void setup()
       {
         for(int j=0;j<cols;j++)
         {
-          fig = get(unit/2+i*unit,unit/2+j*unit);
+          fig = get(unit/2+j*unit,unit/2+i*unit);
           if (red(fig)>100 && green(fig)>100 && blue(fig)>100){state[i][j]=0;}//means white
           else {
-            //String str1="(rgb)=("+(int)red(fig)+","+(int)green(fig)+","+(int)blue(fig)+")";
-            //println(str1);
             state[i][j]=1;
-            if(i>yB)yB=i;
-            if(j<xL)xL=j;
-            if(j>xR)xR=j;
+            if(i>iB)iB=i;
+            if(j<jL)jL=j;
+            if(j>jR)jR=j;
           }
         }
       }
-      String str = str(yB+1-unit/2)+","+str(-unit/2+xL)+","+str(xR+1-unit/2)+"},";
+      String str = str((iB+1)*unit-60)+","+str(60-jL*unit)+","+str((jR+1)*unit-60)+"},";
       print(str);
     }
     println("},");
