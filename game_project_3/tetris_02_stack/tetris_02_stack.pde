@@ -1,3 +1,4 @@
+
 /*
 TETRIS from the scratch by HYOYEON LEE 2021.06.10
 
@@ -21,6 +22,8 @@ TETRIS from the scratch by HYOYEON LEE 2021.06.10
 if all rows are occupied, remove that row.
 and pushes the upper parts to be connected to the lower.
 */
+
+
 char blk_names[] = {'I','J','L','O','S','T','Z'};
 int blk_idx,rot_idx;
 int x,y,isNew,x0,y0;
@@ -30,19 +33,12 @@ int unit=20;
 int step = 20;       //unit size
 String bg_fname = "bg.png"; //
 String initial_bg_fname = "../initial_bg/bg.png";
-
-int edges[][][] = {
-{{40,20,0},{20,40,40},{40,0,20},{0,40,40}},
-{{20,20,20},{20,20,40},{40,20,20},{20,40,20}},
-{{20,40,20},{20,20,20},{20,20,40},{40,20,20}},
-{{20,20,20},{20,20,20},{20,20,20},{20,20,20}},
-{{20,40,20},{40,20,20},{20,20,40},{20,20,20}},
-{{20,40,20},{20,20,20},{20,20,40},{40,20,20}},
-{{20,40,20},{40,20,20},{20,20,40},{20,20,20}}
-};
-
-
-int dB,dL,dR;
+int[][] bg_state;
+//*****************************************
+//*   The filled state of the blocks are  * 
+//*   automatically included              *
+//*   (ex)L_org[rot][yIdx][xIdx]          *
+//*****************************************
 //-------------------------------------------------------------------------Function Pointers----
 String get_blk_fname(int blk_idx, int rot_idx)
 {
@@ -61,25 +57,36 @@ void refresh()
 
 void setup()
 {
-  println(width);
   size(400,620);
   background(255);
   saveFrame(bg_fname);
-  x0=width/2;y0=60; //top center
-  blk_idx=(int)random(0,7); //randomly chosen block type
-  rot_idx=(int)random(0,4); //randomly rotated state
-  isNew=1;                  //1:(x,y)=(x0,y0), 0:(x,y)=on the fly
   imageMode(CENTER);
+  //-------------------------------------------------BG load (well shape)
   img_bg = loadImage(initial_bg_fname);
   image(img_bg,width/2,height/2,width,height);
   saveFrame(bg_fname);
+  for(int yIdx=0;yIdx<height/20;yIdx++)
+  {
+    for(int xIdx=0;xIdx<width/20;xIdx++)
+    {
+      bg_state[yIdx][xIdx] = bg_org[yIdx][xIdx];
+    }
+  }
+  //------------------------------------------------ Choose the 1st block
+  x0=width/2;y0=60; //top center
+  blk_idx=(int)random(0,7); //random block type
+  rot_idx=(int)random(0,4); //randomly rotated
+  isNew=1; //1:(x,y)=(x0,y0), 0:(x,y)=on the fly
   delay(500);
 }
+
+
 void draw()
 { 
+  //-----------------------------------------------1) Updated BG is loaded
   img_bg = loadImage(bg_fname);
   image(img_bg,width/2,height/2,width,height);
-  //background(255);
+  //-----------------------------------------------2) introduce the new/existing block with updated (x,y)
   if(isNew==1)
   {
     x=x0;
@@ -88,18 +95,24 @@ void draw()
   }    
   img_blk = loadImage(get_blk_fname(blk_idx,rot_idx));
   image(img_blk,x,y,dl,dl);
-  dB=y+edges[blk_idx][rot_idx][0];
-  if(dB==height)
+  //-----------------------------------------------3) Check for stacking condition
+                                                      //block bottom == bg top : refresh (save bg)
+                                                      //block bottom != bg top : go further down
+  int stack_flag = is_hit_the_bottom(
+  dB=y+edges[blk_idx][rot_idx][0];                  
+  if(dB==height)                                    
   {
     saveFrame(bg_fname);
     refresh();
-  }
+  }              
   else
   {
     y=y+step;
     delay(100);
   }
 }
+
+//-------------------------------------------------[KEY ACTION]
 void keyPressed()
 {
   if(key==CODED)
@@ -107,7 +120,7 @@ void keyPressed()
     switch(keyCode)
     {
       case UP: 
-        rot_idx=(rot_idx+1)%4;    //clockwise (+90deg)
+        rot_idx=(rot_idx+1)%4;    
         dR= x + edges[blk_idx][rot_idx][2];
         dL= x - edges[blk_idx][rot_idx][1];
         while(dR>width)
@@ -122,7 +135,7 @@ void keyPressed()
         }
         break;
       case DOWN: 
-        rot_idx=(rot_idx-1+4)%4;  //counter-clockwise (-90deg)
+        rot_idx=(rot_idx-1+4)%4;  
         break;
       case RIGHT: 
         dR= x + edges[blk_idx][rot_idx][2];
