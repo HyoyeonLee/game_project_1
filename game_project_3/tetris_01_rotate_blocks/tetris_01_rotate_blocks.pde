@@ -76,6 +76,7 @@ void draw()
   }    
   img_blk = loadImage(get_blk_fname(blk_idx,rot_idx));
   image(img_blk,x,y,dl,dl);
+ 
   dB=y+edges[blk_idx][rot_idx][0];
   if(dB==height)
   {
