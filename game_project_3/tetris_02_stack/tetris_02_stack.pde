@@ -43,7 +43,7 @@ int rows,cols;
 int isAllowed_result;
 int sum;
 String str;
-int temp_x,temp_y;
+int temp_rot,temp_x,temp_y;
 //*****************************************
 //*   The filled state of the blocks are  * 
 //*   automatically included              *
@@ -100,7 +100,6 @@ int isAllowed(int type,int rot,int x, int y)
       blk_el=blk_org[type][rot][bi][bj];
       sum =bg_el+blk_el; 
       tempM[i][j] = sum;
-      //delay(5);
       if(tempM[i][j]==2){return 0;}
     }
   } 
@@ -129,7 +128,6 @@ void setup()
   rot  = (int)random(0,4); //randomly rotated
   isNew = 1; //1:(x,y)=(x0,y0), 0:(x,y)=on the fly
   delay(250);
-  //count=0;
 }
 
 
@@ -164,83 +162,39 @@ void draw()
 //-------------------------------------------------[KEY ACTION]
 void keyPressed()
 {
-  int temp_rot,temp_x;//,temp_y;
   if(key==CODED)
   {
     switch(keyCode)
     {
       case UP: 
-        //rot=(rot+1)%4;    
         temp_rot = (rot+1)%4;
-        if(isAllowed(type,temp_rot,x,y)==0)
-        {
-           //saveFrame(bg_fname);
-           //refresh();
-        }
-        else 
-        {
-          rot=temp_rot;
-          //update_bg_state(type,rot,x,y);
-         // delay(100);
-        }
+        if(isAllowed(type,temp_rot,x,y)==0){}
+        else {rot=temp_rot;}
         break;
       case DOWN:   
         temp_rot = (rot-1+4)%4;
-        if(isAllowed(type,temp_rot,x,y)==0)
-        {
-           //saveFrame(bg_fname);
-           //refresh();
-        }
-        else 
-        {
-          rot=temp_rot;
-         // update_bg_state(type,rot,x,y);
-         // delay(300);
-        }
+        if(isAllowed(type,temp_rot,x,y)==0){}
+        else {rot=temp_rot;}
         break;
       case RIGHT: 
         temp_x = x+step;
-        if(isAllowed(type,rot,temp_x,y)==0)
-        {
-           //saveFrame(bg_fname);
-           //refresh();
-        }
-        else 
-        {
-          x=temp_x;
-          //update_bg_state(type,rot,x,y);
-          //delay(300);
-        }
+        if(isAllowed(type,rot,temp_x,y)==0){}
+        else {x=temp_x;}
         break;
       case LEFT:
         temp_x = x-step;
-        if(isAllowed(type,rot,temp_x,y)==0)
-        {
-           //saveFrame(bg_fname);
-           //refresh();
-        }
-        else 
-        {
-          x=temp_x;
-          //update_bg_state(type,rot,x,y);
-          //delay(300);
-        }
+        if(isAllowed(type,rot,temp_x,y)==0){}
+        else {x=temp_x;}
         break;
-    /*  case 0x20://space bar
-        temp_y = y+5*step;
-        if(isAllowed(type,rot,x,temp_y)==0)
-        {
-           saveFrame(bg_fname);
-           refresh();
-        }
-        else 
+      case 0x20://space bar
+        temp_y = y+step;
+        while(isAllowed(type,rot,x,temp_y)!=0)
         {
           y=temp_y;
-          //update_bg_state(type,rot,x,y);
+          temp_y = y+step;
           delay(300);
         }
         break;
-        */
     }
   }
 }
