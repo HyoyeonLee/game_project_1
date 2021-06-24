@@ -43,6 +43,7 @@ int rows,cols;
 int isAllowed_result;
 int sum;
 String str;
+int temp_x,temp_y;
 //*****************************************
 //*   The filled state of the blocks are  * 
 //*   automatically included              *
@@ -67,12 +68,18 @@ void update_bg_state(int type,int rot,int x,int y)
 {
   ic=y/20;jc=x/20;
   for(int i=ic-3;i<ic+3;i++)
+  {
     for(int j=jc-3;j<jc+3;j++)
-     {
-       sum=tempM[i][j];
-       //delay(5);
-       bg_state[i][j]=sum;
-     }
+    {
+      bi=i-(ic-3);
+      bj=j-(jc-3);
+      bg_el=bg_state[i][j];
+      blk_el=blk_org[type][rot][bi][bj];
+      sum =bg_el+blk_el; 
+      tempM[i][j] = sum;
+      bg_state[i][j] = sum;
+    }
+  }
 }
 void clear(int[][] mat)
 {
@@ -133,11 +140,10 @@ void draw()
     x=x0;
     y=y0;
     isNew=0;
-  }      
-  isAllowed_result = isAllowed(type,rot,x,y);
+  }
+  temp_y = y+step;
+  isAllowed_result = isAllowed(type,rot,x,temp_y);
   delay(150);
-  str ="isAllowed = "+str(isAllowed_result)+"(type,rot,x,y)="+str(type)+str(rot)+str(x)+str(y);
-  println(str);
   if(isAllowed_result==0)
   {
      update_bg_state(type,rot,x,y);
@@ -147,11 +153,11 @@ void draw()
   }
   else 
   {
+    y=temp_y;
     img_bg = loadImage(bg_fname);
     image(img_bg,width/2,height/2,width,height);
     img_blk = loadImage(get_blk_fname(type,rot));
-    image(img_blk,x,y,dl,dl);
-    y=y+step;
+    image(img_blk,x,y,dl,dl); 
     delay(100);
   }
 }
