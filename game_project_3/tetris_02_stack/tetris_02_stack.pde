@@ -33,8 +33,16 @@ int unit=20;
 int step = 20;       //unit size
 String bg_fname = "bg.png"; //
 String initial_bg_fname = "../initial_bg/bg.png";
-int[][] bg_state = new int[31][20];
+int[][] bg_state = new int[37][30];
+int[][] tempM = new int[37][30];
 int count=10;
+int ic,jc;
+int bi,bj;
+int bg_el, blk_el;
+int rows,cols;
+int isAllowed_result;
+int sum;
+String str;
 //*****************************************
 //*   The filled state of the blocks are  * 
 //*   automatically included              *
@@ -51,50 +59,52 @@ String get_blk_fname(int type, int rot)
 void refresh()
 {
    //debug
-   type=0;//(int)random(0,blk_names.length); //randomly chosen block type
-   rot=1;//(int)random(0,4); //randomly rotated state by {0,90,180,270}
-   type=0;rot=1;
+   type = (int)random(0,blk_names.length); //randomly chosen block type
+   rot  = (int)random(0,4); //randomly rotated state by {0,90,180,270}
    isNew=1;
 }
 void update_bg_state(int type,int rot,int x,int y)
 {
-  int ic=y/20,jc=x/20;
+  ic=y/20;jc=x/20;
   for(int i=ic-3;i<ic+3;i++)
-  {
     for(int j=jc-3;j<jc+3;j++)
-    {
-      bg_state[i][j]+=blk_org[type][rot][i-(ic-3)][j-(jc-3)];
-    }
-  }
+     {
+       sum=tempM[i][j];
+       //delay(5);
+       bg_state[i][j]=sum;
+     }
+}
+void clear(int[][] mat)
+{
+  for(int i=0;i<37;i++)
+  for(int j=0;j<30;j++)
+  tempM[i][j]=0;
 }
 int isAllowed(int type,int rot,int x, int y)
 {
-  int ic=y/20,jc=x/20;
-  println(" ");println(" ");print(count);println(" **********************");
+  ic=y/20;jc=x/20;
   for(int i=ic-3;i<ic+3;i++)
   {
-    int bi,bj;
     for(int j=jc-3;j<jc+3;j++)
     {
       bi=i-(ic-3);
       bj=j-(jc-3);
-      int bg_el=bg_state[i][j];
-      int blk_el=blk_org[type][rot][i-(ic-3)][j-(jc-3)];
-    if(count<4)
-      {
-        print("(i,j|bi,bj)= ",i,j,bi,bj);
-        print(",  (bg,blk)=",bg_el,blk_el);println(" ");
-      }
-        
-    if(bg_el>=(2-blk_el)){return 0;}
+      bg_el=bg_state[i][j];
+      blk_el=blk_org[type][rot][bi][bj];
+      sum =bg_el+blk_el; 
+      tempM[i][j] = sum;
+      //delay(5);
+      if(tempM[i][j]==2){return 0;}
     }
-  }
+  } 
   return 1;
 }
 
 void setup()
 {
-  size(400,620);
+  size(600,740);
+  rows = height/20;
+  cols = width/20;
   background(255);
   saveFrame(bg_fname);
   imageMode(CENTER);
@@ -102,62 +112,53 @@ void setup()
   img_bg = loadImage(initial_bg_fname);
   image(img_bg,width/2,height/2,width,height);
   saveFrame(bg_fname);
-  for(int yIdx=0;yIdx<31;yIdx++)
-  {
-    for(int xIdx=0;xIdx<20;xIdx++)
-    {
+  for(int yIdx=0;yIdx<37;yIdx++)
+    for(int xIdx=0;xIdx<30;xIdx++)
       bg_state[yIdx][xIdx] = bg_org[yIdx][xIdx];
-      //print(bg_state[yIdx][xIdx],",");
-    }
-  }
   //------------------------------------------------ Choose the 1st block
   x0=width/2;y0=60; //top center
   //debug
-  type=0;//(int)random(0,7); //random block type
-  rot=1;//(int)random(0,4); //randomly rotated
-  isNew=1; //1:(x,y)=(x0,y0), 0:(x,y)=on the fly
-  delay(500);
-  count=0;
+  type = (int)random(0,7); //random block type
+  rot  = (int)random(0,4); //randomly rotated
+  isNew = 1; //1:(x,y)=(x0,y0), 0:(x,y)=on the fly
+  delay(250);
+  //count=0;
 }
 
 
 void draw()
 { 
-  //-----------------------------------------------1) Updated bg.png is loaded
-  img_bg = loadImage(bg_fname);
-  image(img_bg,width/2,height/2,width,height);
-  //-----------------------------------------------2) introduce the new/existing block with updated (x,y)
-  img_blk = loadImage(get_blk_fname(type,rot));
   if(isNew==1)
   {
     x=x0;
     y=y0;
     isNew=0;
-  }    
-  image(img_blk,x,y,dl,dl);
-  //-----------------------------------------------3) Check for stacking condition
-  int isAllowed_result = isAllowed(type,rot,x,y);
+  }      
+  isAllowed_result = isAllowed(type,rot,x,y);
+  delay(150);
+  str ="isAllowed = "+str(isAllowed_result)+"(type,rot,x,y)="+str(type)+str(rot)+str(x)+str(y);
+  println(str);
   if(isAllowed_result==0)
   {
+     update_bg_state(type,rot,x,y);
      saveFrame(bg_fname);
      refresh();
-     delay(1000);
-     //count=1;
+     delay(100);
   }
   else 
   {
-    //image(img_blk,x,y,dl,dl);
+    img_bg = loadImage(bg_fname);
+    image(img_bg,width/2,height/2,width,height);
+    img_blk = loadImage(get_blk_fname(type,rot));
+    image(img_blk,x,y,dl,dl);
     y=y+step;
-    update_bg_state(type,rot,x,y);
-    delay(1000);
-    //count=2;
+    delay(100);
   }
-  count++;
 }
 //-------------------------------------------------[KEY ACTION]
 void keyPressed()
 {
-  int temp_rot,temp_x,temp_y;
+  int temp_rot,temp_x;//,temp_y;
   if(key==CODED)
   {
     switch(keyCode)
@@ -167,59 +168,59 @@ void keyPressed()
         temp_rot = (rot+1)%4;
         if(isAllowed(type,temp_rot,x,y)==0)
         {
-           saveFrame(bg_fname);
-           refresh();
+           //saveFrame(bg_fname);
+           //refresh();
         }
         else 
         {
           rot=temp_rot;
-          update_bg_state(type,rot,x,y);
-          delay(100);
+          //update_bg_state(type,rot,x,y);
+         // delay(100);
         }
         break;
       case DOWN:   
         temp_rot = (rot-1+4)%4;
         if(isAllowed(type,temp_rot,x,y)==0)
         {
-           saveFrame(bg_fname);
-           refresh();
+           //saveFrame(bg_fname);
+           //refresh();
         }
         else 
         {
           rot=temp_rot;
-          update_bg_state(type,rot,x,y);
-          delay(100);
+         // update_bg_state(type,rot,x,y);
+         // delay(300);
         }
         break;
       case RIGHT: 
         temp_x = x+step;
         if(isAllowed(type,rot,temp_x,y)==0)
         {
-           saveFrame(bg_fname);
-           refresh();
+           //saveFrame(bg_fname);
+           //refresh();
         }
         else 
         {
           x=temp_x;
-          update_bg_state(type,rot,x,y);
-          delay(100);
+          //update_bg_state(type,rot,x,y);
+          //delay(300);
         }
         break;
       case LEFT:
         temp_x = x-step;
         if(isAllowed(type,rot,temp_x,y)==0)
         {
-           saveFrame(bg_fname);
-           refresh();
+           //saveFrame(bg_fname);
+           //refresh();
         }
         else 
         {
           x=temp_x;
-          update_bg_state(type,rot,x,y);
-          delay(100);
+          //update_bg_state(type,rot,x,y);
+          //delay(300);
         }
         break;
-      case 0x20://space bar
+    /*  case 0x20://space bar
         temp_y = y+5*step;
         if(isAllowed(type,rot,x,temp_y)==0)
         {
@@ -229,10 +230,11 @@ void keyPressed()
         else 
         {
           y=temp_y;
-          update_bg_state(type,rot,x,y);
-          delay(100);
+          //update_bg_state(type,rot,x,y);
+          delay(300);
         }
         break;
+        */
     }
   }
 }
