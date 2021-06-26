@@ -1,18 +1,22 @@
 
 /*
-TETRIS from the scratch by HYOYEON LEE 2021.06.24
+TETRIS from the scratch by HYOYEON LEE 2021.06.10
 
-[clear lines with no void]
+[stacking]
 1) enum doesnt work in Processing, just use indices type and rot
 2) activated keys are the four arrows and a space bar.
-[done in tetris_01_rotate_blocks.ped]
+[done in tetris.01.ped]
 --------------------------------------
+
+
 3) need to have an array that keeps track of "occupied"/"vacant"
   --> state_bg[rows/unit][cols/unit] : occupied=1, vacant=0
+  
 4) The coors of the edges of every block rotated by a specific angle are needed.
   --> no need! each block with each rotation state has an array of the filled state (ex)state_L1,...
-[done in tetris_02_stack.ped]
---------------------------------------
+  
+5) if edgeIdx == occupiedIdx, reverse the inc/dec and saveFrame as bg.png
+ -->(L,R) key : state_blkn[y+][j]
 
 [clear]
 if all rows are occupied, remove that row.
@@ -40,12 +44,6 @@ int isAllowed_result;
 int sum;
 String str;
 int temp_rot,temp_x,temp_y;
-PImage img_crop;
-String crop_fname = "crop.png";
-String bg_cleared_fname = "bg_cleared.png";
-int cIdx; // y index to be cleared
-int[] cLines = new int[6];
-//int count_lines=0;
 //*****************************************
 //*   The filled state of the blocks are  * 
 //*   automatically included              *
@@ -61,39 +59,16 @@ String get_blk_fname(int type, int rot)
 }
 void refresh()
 {
-  type = (int)random(0,blk_names.length); //randomly chosen block type
-  rot  = (int)random(0,4); //randomly rotated state by {0,90,180,270}
-  isNew=1;
-}
-int count_filled_lines()
-{
-  for(int i=0;i<6;i++)cLines[i]=0;
-  ic=y/20;jc=x/20;
-  int countIdx=0;
-  for(int i=ic-3;i<ic+3;i++)
-  {
-    int flag=0;
-    int bar = 31;
-    for(int k=6;k<24;k++)
-    {
-      if(bg_state[i][k]==0){flag=1;}
-      delay(1);
-    }
-    if(flag==0 && i!=bar)
-    {
-//      cLines[countIdx]=i;
-      cLines[countIdx]=i;
-      countIdx++;
-    }
-  }
-  return countIdx;
+   //debug
+   type = (int)random(0,blk_names.length); //randomly chosen block type
+   rot  = (int)random(0,4); //randomly rotated state by {0,90,180,270}
+   isNew=1;
 }
 void update_bg_state(int type,int rot,int x,int y)
 {
   ic=y/20;jc=x/20;
   for(int i=ic-3;i<ic+3;i++)
   {
-    int flag=0;
     for(int j=jc-3;j<jc+3;j++)
     {
       bi=i-(ic-3);
@@ -103,40 +78,15 @@ void update_bg_state(int type,int rot,int x,int y)
       sum =bg_el+blk_el; 
       tempM[i][j] = sum;
       bg_state[i][j] = sum;
-      delay(1);
+      delay(3);
     }
   }
 }
-
-void update_bg_state_by_clearing(int cIdx)
+void clear(int[][] mat)
 {
-  int temp_el;
-  for(int i=cIdx;i>=1;i--)
-  {
-    for(int j=0;j<cols;j++)
-    {
-     temp_el = bg_state[i-1][j];
-      bg_state[i][j] = temp_el;
-      delay(1);
-    }
-  }
-}
-void clear(int cIdx)
-{
-  imageMode(CENTER);
-  img_bg=loadImage(bg_fname);
-  image(img_bg,width/2,height/2,width,height);
-  img_crop = img_bg.get(120,0,width-240,20*(cIdx));
-  img_crop.save(crop_fname);
-  imageMode(CORNER);
-  image(img_crop,120,20,width-240,20*(cIdx));
-  update_bg_state_by_clearing(cIdx);
-  saveFrame(bg_cleared_fname);
-  imageMode(CENTER);
-  PImage img_bg_cleared = loadImage(bg_cleared_fname);
-  image(img_bg_cleared,width/2,height/2,width,height);
-  //refresh();
-     
+  for(int i=0;i<37;i++)
+  for(int j=0;j<30;j++)
+  tempM[i][j]=0;
 }
 int isAllowed(int type,int rot,int x, int y)
 {
@@ -178,7 +128,7 @@ void setup()
   type = (int)random(0,7); //random block type
   rot  = (int)random(0,4); //randomly rotated
   isNew = 1; //1:(x,y)=(x0,y0), 0:(x,y)=on the fly
-  delay(100);
+  delay(250);
 }
 
 
@@ -192,13 +142,13 @@ void draw()
   }
   temp_y = y+step;
   isAllowed_result = isAllowed(type,rot,x,temp_y);
-  delay(40);
+  delay(150);
   if(isAllowed_result==0)
   {
      update_bg_state(type,rot,x,y);
      saveFrame(bg_fname);
      refresh();
-     delay(40);
+     delay(100);
   }
   else 
   {
@@ -207,22 +157,8 @@ void draw()
     image(img_bg,width/2,height/2,width,height);
     img_blk = loadImage(get_blk_fname(type,rot));
     image(img_blk,x,y,dl,dl); 
-    delay(40);
+    delay(100);
   }
- int  count_lines=count_filled_lines();
-  if(count_lines>0)
-     {
-       for(int i=0;i<count_lines;i++)
-       {
-         clear(cLines[i]);
-       //  clear(cLines[0]);
-         delay(2);
-         saveFrame(bg_fname);
-         
-       }
-       count_lines=0;
-     }   
-     
 }
 //-------------------------------------------------[KEY ACTION]
 void keyPressed()
